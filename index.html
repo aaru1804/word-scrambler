@@ -1,16 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Unscrambler</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Scrambler</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    button {
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #result, #meaning {
+      font-size: 18px;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
-    <h1>Word Unscrambler</h1>
-    <input type="text" id="scrambledWord" placeholder="Enter scrambled word">
-    <button onclick="unscramble()">Unscramble</button>
-    <p id="result"></p>
+  <h1>Word Scrambler</h1>
+  
+  <!-- Input field for scrambled word -->
+  <p>Enter a scrambled word:</p>
+  <input type="text" id="scrambled-word" placeholder="Enter scrambled word">
+  <button onclick="validateWord()">Check Word</button>
+  
+  <!-- Placeholder for the results -->
+  <p id="result"></p>
+  <p id="meaning"></p>
 
-    <script src="script.js"></script>
+  <script>
+    // Function to validate if a scrambled word exists
+    function validateWord() {
+      const scrambledWord = document.getElementById("scrambled-word").value.trim();
+
+      // Validate input (ensure it's not empty)
+      if (!scrambledWord) {
+        document.getElementById("result").innerHTML = "Please enter a scrambled word!";
+        return;
+      }
+
+      // Call the Datamuse API to check if the word exists
+      const apiUrl = `https://api.datamuse.com/words?sp=${scrambledWord}`;
+
+      fetch(apiUrl)
+        .then(response => response.json())  // Parse the response as JSON
+        .then(data => {
+          if (data.length > 0) {
+            // If the word is valid, show a success message
+            document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
+            getMeaning(scrambledWord);  // Optionally, get and display meaning
+          } else {
+            // If the word is invalid
+            document.getElementById("result").innerHTML = `"${scrambledWord}" is NOT a valid word.`;
+            document.getElementById("meaning").innerHTML = ""; // Clear any previous meaning
+          }
+        })
+        .catch(error => {
+          console.error("Error with API request:", error);
+          document.getElementById("result").innerHTML = "There was an error checking the word.";
+        });
+    }
+
+    // Function to get word meaning (for example purposes)
+    function getMeaning(word) {
+      document.getElementById("meaning").innerHTML = `Meaning of "${word}": A valid English word!`;
+    }
+  </script>
 </body>
 </html>
