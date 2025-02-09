@@ -48,7 +48,7 @@
 
   <script>
     // Function to validate if a scrambled word exists
-    function validateWord() {
+    async function validateWord() {
       const scrambledWord = document.getElementById("scrambled-word").value.trim();
 
       // Validate input (ensure it's not empty)
@@ -61,26 +61,26 @@
       const corsProxy = "https://cors-anywhere.herokuapp.com/"; // CORS proxy
       const apiUrl = `${corsProxy}https://api.datamuse.com/words?sp=${scrambledWord}`;
 
-      fetch(apiUrl)
-        .then(response => response.json())  // Parse the response as JSON
-        .then(data => {
-          if (data.length > 0) {
-            // If the word is valid, show a success message
-            document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
-            getMeaning(scrambledWord);  // Optionally, get and display meaning
-          } else {
-            // If the word is invalid, try permutations
-            findCorrectWord(scrambledWord);
-          }
-        })
-        .catch(error => {
-          console.error("Error with API request:", error);
-          document.getElementById("result").innerHTML = "There was an error checking the word.";
-        });
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        
+        if (data.length > 0) {
+          // If the word is valid, show a success message
+          document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
+          getMeaning(scrambledWord);  // Optionally, get and display meaning
+        } else {
+          // If the word is invalid, try permutations
+          await findCorrectWord(scrambledWord);
+        }
+      } catch (error) {
+        console.error("Error with API request:", error);
+        document.getElementById("result").innerHTML = "There was an error checking the word.";
+      }
     }
 
     // Function to find the correct word by generating permutations
-    function findCorrectWord(scrambledWord) {
+    async function findCorrectWord(scrambledWord) {
       const permutations = getPermutations(scrambledWord);
       let foundWord = null;
 
@@ -89,19 +89,19 @@
         const word = permutations[i];
         const apiUrl = `https://cors-anywhere.herokuapp.com/https://api.datamuse.com/words?sp=${word}`;
 
-        fetch(apiUrl)
-          .then(response => response.json())  // Parse the response as JSON
-          .then(data => {
-            if (data.length > 0) {
-              foundWord = word; // A valid word has been found
-              document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
-              getMeaning(foundWord);  // Optionally, get and display meaning
-              return;
-            }
-          })
-          .catch(error => {
-            console.error("Error with API request:", error);
-          });
+        try {
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+          
+          if (data.length > 0) {
+            foundWord = word; // A valid word has been found
+            document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
+            getMeaning(foundWord);  // Optionally, get and display meaning
+            return;
+          }
+        } catch (error) {
+          console.error("Error with API request for permutation:", error);
+        }
       }
 
       // If no valid word was found
