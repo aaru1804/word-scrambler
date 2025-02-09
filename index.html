@@ -57,8 +57,9 @@
         return;
       }
 
-      // Call the Datamuse API to check if the word exists
-      const apiUrl = `https://api.datamuse.com/words?sp=${scrambledWord}`;
+      // Use CORS proxy to bypass CORS issue when calling Datamuse API
+      const corsProxy = "https://cors-anywhere.herokuapp.com/"; // CORS proxy
+      const apiUrl = `${corsProxy}https://api.datamuse.com/words?sp=${scrambledWord}`;
 
       fetch(apiUrl)
         .then(response => response.json())  // Parse the response as JSON
