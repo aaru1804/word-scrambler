@@ -57,15 +57,21 @@
         return;
       }
 
-      // Use CORS proxy to bypass CORS issue when calling Datamuse API
-      const corsProxy = "https://cors-anywhere.herokuapp.com/"; // CORS proxy
-      const apiUrl = `${corsProxy}https://api.datamuse.com/words?sp=${scrambledWord}`;
+      // Use a more reliable CORS proxy
+      const corsProxy = "https://api.allorigins.win/get?url=";
+      const apiUrl = `https://api.datamuse.com/words?sp=${scrambledWord}`;
+      const proxiedUrl = `${corsProxy}${encodeURIComponent(apiUrl)}`;
+
+      console.log("API URL:", proxiedUrl);  // Debugging log
 
       try {
-        const response = await fetch(apiUrl);
+        const response = await fetch(proxiedUrl);
         const data = await response.json();
-        
-        if (data.length > 0) {
+
+        // Log API response for debugging
+        console.log("API Response:", data);
+
+        if (data.contents && data.contents.length > 0) {
           // If the word is valid, show a success message
           document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
           getMeaning(scrambledWord);  // Optionally, get and display meaning
@@ -87,13 +93,19 @@
       // Loop through all permutations to check if any is a valid word
       for (let i = 0; i < permutations.length; i++) {
         const word = permutations[i];
-        const apiUrl = `https://cors-anywhere.herokuapp.com/https://api.datamuse.com/words?sp=${word}`;
+        const apiUrl = `https://api.datamuse.com/words?sp=${word}`;
+        const proxiedUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+
+        console.log("Checking permutation:", word);  // Debugging log
 
         try {
-          const response = await fetch(apiUrl);
+          const response = await fetch(proxiedUrl);
           const data = await response.json();
-          
-          if (data.length > 0) {
+
+          // Log API response for debugging
+          console.log("API Response for permutation:", data);
+
+          if (data.contents && data.contents.length > 0) {
             foundWord = word; // A valid word has been found
             document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
             getMeaning(foundWord);  // Optionally, get and display meaning
