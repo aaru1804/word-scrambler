@@ -69,15 +69,64 @@
             document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
             getMeaning(scrambledWord);  // Optionally, get and display meaning
           } else {
-            // If the word is invalid
-            document.getElementById("result").innerHTML = `"${scrambledWord}" is NOT a valid word.`;
-            document.getElementById("meaning").innerHTML = ""; // Clear any previous meaning
+            // If the word is invalid, try permutations
+            findCorrectWord(scrambledWord);
           }
         })
         .catch(error => {
           console.error("Error with API request:", error);
           document.getElementById("result").innerHTML = "There was an error checking the word.";
         });
+    }
+
+    // Function to find the correct word by generating permutations
+    function findCorrectWord(scrambledWord) {
+      const permutations = getPermutations(scrambledWord);
+      let foundWord = null;
+
+      // Loop through all permutations to check if any is a valid word
+      for (let i = 0; i < permutations.length; i++) {
+        const word = permutations[i];
+        const apiUrl = `https://cors-anywhere.herokuapp.com/https://api.datamuse.com/words?sp=${word}`;
+
+        fetch(apiUrl)
+          .then(response => response.json())  // Parse the response as JSON
+          .then(data => {
+            if (data.length > 0) {
+              foundWord = word; // A valid word has been found
+              document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
+              getMeaning(foundWord);  // Optionally, get and display meaning
+              return;
+            }
+          })
+          .catch(error => {
+            console.error("Error with API request:", error);
+          });
+      }
+
+      // If no valid word was found
+      if (!foundWord) {
+        document.getElementById("result").innerHTML = `"${scrambledWord}" does not form a valid word.`;
+        document.getElementById("meaning").innerHTML = "";
+      }
+    }
+
+    // Function to generate all permutations of a string
+    function getPermutations(str) {
+      let results = [];
+      if (str.length === 1) {
+        results.push(str);
+      } else {
+        for (let i = 0; i < str.length; i++) {
+          const char = str[i];
+          const remainingChars = str.slice(0, i) + str.slice(i + 1);
+          const subPermutations = getPermutations(remainingChars);
+          for (let j = 0; j < subPermutations.length; j++) {
+            results.push(char + subPermutations[j]);
+          }
+        }
+      }
+      return results;
     }
 
     // Function to get word meaning (for example purposes)
