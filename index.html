@@ -65,9 +65,16 @@
       console.log("API URL (Proxied):", proxiedUrl);  // Debugging log
 
       try {
-        // Make the fetch request
+        // Make the fetch request to check the scrambled word itself
         const response = await fetch(proxiedUrl);
         
+        // Check if the response is ok
+        if (!response.ok) {
+          console.error("Error: Network response was not ok.");
+          document.getElementById("result").innerHTML = "There was an error with the request.";
+          return;
+        }
+
         // Parse the JSON response
         const data = await response.json();
         console.log("API Response:", data);
