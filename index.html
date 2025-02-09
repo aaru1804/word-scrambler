@@ -3,18 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Scrambler</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Word Unscrambler</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Word Scrambler</h1>
-        <p>Enter a word below and click "Scramble" to see the scrambled version:</p>
-        <input type="text" id="inputWord" placeholder="Enter a word" />
-        <button onclick="scrambleWord()">Scramble</button>
-        <p id="scrambledWord"></p>
-        <button onclick="unscrambleWord()">Unscramble</button>
-    </div>
+    <h1>Word Unscrambler</h1>
+    <input type="text" id="scrambledWord" placeholder="Enter scrambled word">
+    <button onclick="unscramble()">Unscramble</button>
+    <p id="result"></p>
+
     <script src="script.js"></script>
 </body>
 </html>
