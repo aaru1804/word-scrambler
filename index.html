@@ -57,21 +57,26 @@
         return;
       }
 
-      // Use a more reliable CORS proxy
+      // Use a CORS proxy to avoid CORS issues
       const corsProxy = "https://api.allorigins.win/get?url=";
       const apiUrl = `https://api.datamuse.com/words?sp=${scrambledWord}`;
       const proxiedUrl = `${corsProxy}${encodeURIComponent(apiUrl)}`;
 
-      console.log("API URL:", proxiedUrl);  // Debugging log
+      console.log("API URL (Proxied):", proxiedUrl);  // Debugging log
 
       try {
+        // Make the fetch request
         const response = await fetch(proxiedUrl);
+        
+        // Parse the JSON response
         const data = await response.json();
-
-        // Log API response for debugging
         console.log("API Response:", data);
 
-        if (data.contents && data.contents.length > 0) {
+        // Check if 'contents' exist and parse the response
+        const words = JSON.parse(data.contents);  // Parse the 'contents' field from the response
+        console.log("Valid words found:", words);
+
+        if (words && words.length > 0) {
           // If the word is valid, show a success message
           document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
           getMeaning(scrambledWord);  // Optionally, get and display meaning
@@ -105,7 +110,9 @@
           // Log API response for debugging
           console.log("API Response for permutation:", data);
 
-          if (data.contents && data.contents.length > 0) {
+          // Parse the contents and check if a valid word is found
+          const words = JSON.parse(data.contents);
+          if (words && words.length > 0) {
             foundWord = word; // A valid word has been found
             document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
             getMeaning(foundWord);  // Optionally, get and display meaning
