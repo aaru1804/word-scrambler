@@ -4,7 +4,7 @@ async function fetchWordsFromGithub(url) {
         const response = await fetch(url);
         if (response.ok) {
             const text = await response.text();
-            return text.split('\n'); // Corrected to split the text by newlines
+            return text.split('\n'); // Corrected to split by newlines using '\n'
         } else {
             console.error("Failed to fetch the file.");
             return [];
