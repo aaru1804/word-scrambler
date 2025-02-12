@@ -41,11 +41,11 @@
     </div>
 
     <script>
-        // Fetch the words list from GitHub
+        // Fetch the words list from GitHub and convert all to lowercase
         async function fetchWordList() {
             const response = await fetch('https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt');
             const text = await response.text();
-            return text.split('\n').map(word => word.trim().toLowerCase());  // Return as an array of words
+            return text.split('\n').map(word => word.trim().toLowerCase());  // Convert each word to lowercase
         }
 
         // Function to find possible correct words based on scrambled input
