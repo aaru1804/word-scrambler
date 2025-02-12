@@ -1,4 +1,4 @@
-// Function to validate if a scrambled word exists (using words.txt from GitHub)
+// Function to validate if a scrambled word exists
 async function validateWord() {
   const scrambledWord = document.getElementById("scrambled-word").value.trim();
 
@@ -8,42 +8,40 @@ async function validateWord() {
     return;
   }
 
-  // Fetch words.txt from GitHub
-  const wordsUrl = 'https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt';
-
+  // Fetch the words list from GitHub
+  const wordsListUrl = "https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt";
+  
   try {
-    // Fetch the word list from GitHub (text file)
-    const response = await fetch(wordsUrl);
-    const data = await response.text();
+    const response = await fetch(wordsListUrl);
+    const wordsList = await response.text();
+    const wordsArray = wordsList.split("\n").map(word => word.trim().toLowerCase());
 
-    // Split the file content into an array of words
-    const wordList = data.split('\n').map(word => word.trim().toLowerCase());
+    console.log("Words List:", wordsArray); // Debugging log
 
-    // Check if the scrambled word is in the word list
-    if (wordList.includes(scrambledWord.toLowerCase())) {
+    if (wordsArray.includes(scrambledWord.toLowerCase())) {
+      // If the word is valid
       document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
       getMeaning(scrambledWord);  // Optionally, get and display meaning
     } else {
       // If the word is invalid, try permutations
-      await findCorrectWord(scrambledWord, wordList);
+      await findCorrectWord(scrambledWord, wordsArray);
     }
   } catch (error) {
-    console.error("Error with fetching words from GitHub:", error);
+    console.error("Error fetching words list:", error);
     document.getElementById("result").innerHTML = "There was an error checking the word.";
   }
 }
 
 // Function to find the correct word by generating permutations
-async function findCorrectWord(scrambledWord, wordList) {
-  const permutations = getPermutations(scrambledWord);
+async function findCorrectWord(scrambledWord, wordsArray) {
+  const permutations = getPermutations(scrambledWord.toLowerCase());
   let foundWord = null;
 
   // Loop through all permutations to check if any is a valid word
   for (let i = 0; i < permutations.length; i++) {
-    const word = permutations[i].toLowerCase();
-
-    // Check if the word is in the word list from GitHub
-    if (wordList.includes(word)) {
+    const word = permutations[i];
+    
+    if (wordsArray.includes(word)) {
       foundWord = word; // A valid word has been found
       document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
       getMeaning(foundWord);  // Optionally, get and display meaning
