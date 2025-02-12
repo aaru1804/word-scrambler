@@ -4,25 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Scrambler Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        #scrambledWord {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #uncrambledWord {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-
     <h1>Word Scrambler Game</h1>
-    
-    <!-- Display the scrambled word -->
-    <p id="scrambledWord">Scrambled Word: </p>
+    <div id="scrambledWord">Scrambled Word: Loading...</div>
+    <input type="text" id="unscrambledInput" placeholder="Enter your guess">
+    <button onclick="validateWord()">Unscramble</button>
+    <div id="uncrambledWord"></div>
 
-    <!-- Input for the user to type the unscrambled word -->
-    <input type="text" id="unscrambledInput" placeholder="Enter unscrambled word">
-
-    <!-- Button to trigger word validation -->
-    <button onclick="validateWord()">Validate Word</button>
-
-    <!-- Display whether the word is correct or not -->
-    <p id="uncrambledWord">Uncrambled Word: </p>
-
-    <!-- Link to the external script.js file -->
-    <script type="module" src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>

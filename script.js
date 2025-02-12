@@ -25,6 +25,13 @@ function scrambleWord(word) {
     return wordList.join('');
 }
 
+// Function to compare the scrambled input with all words and find a match
+function unscramble(input, wordList) {
+    // Sort letters of the input and compare with sorted letters of each word in the word list
+    const sortedInput = input.split('').sort().join('');
+    return wordList.find(word => sortedInput === word.split('').sort().join(''));
+}
+
 // Main function to load words, scramble one, and try to validate it
 async function main() {
     const url = 'https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt';
@@ -39,6 +46,7 @@ async function main() {
     document.getElementById('scrambledWord').innerText = `Scrambled Word: ${scrambled}`;
 
     // Store the original word for later validation
+    window.wordList = words; // Store the word list globally
     window.originalWord = originalWord;
 }
 
@@ -46,9 +54,11 @@ async function main() {
 function validateWord() {
     const inputWord = document.getElementById('unscrambledInput').value.trim();
 
-    // Check if the input matches the original word
-    if (inputWord === window.originalWord) {
-        document.getElementById('uncrambledWord').innerText = `Uncrambled Word: ${inputWord} (Correct!)`;
+    // Check if the input matches the original word by unscrambling
+    const correctWord = unscramble(inputWord, window.wordList);
+
+    if (correctWord) {
+        document.getElementById('uncrambledWord').innerText = `Uncrambled Word: ${correctWord} (Correct!)`;
     } else {
         document.getElementById('uncrambledWord').innerText = `Uncrambled Word: ${inputWord} (Incorrect)`;
     }
