@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Scrambler</title>
-    <!-- Optional: Add a favicon -->
-    <!-- Remove this line if you don't need a favicon -->
-    <!-- <link rel="icon" href="path/to/favicon.ico" /> -->
+    <title>Word Scrambler Game</title>
 </head>
 <body>
 
     <h1>Word Scrambler Game</h1>
     
+    <!-- Display the scrambled word -->
+    <p id="scrambledWord">Scrambled Word: </p>
+
+    <!-- Input for the user to type the unscrambled word -->
+    <input type="text" id="unscrambledInput" placeholder="Enter unscrambled word">
+
     <!-- Button to trigger word validation -->
     <button onclick="validateWord()">Validate Word</button>
 
-    <p id="scrambledWord">Scrambled Word: </p>
+    <!-- Display whether the word is correct or not -->
     <p id="uncrambledWord">Uncrambled Word: </p>
 
     <!-- Link to the external script.js file -->

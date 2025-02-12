@@ -25,11 +25,6 @@ function scrambleWord(word) {
     return wordList.join('');
 }
 
-// Function to find the uncrambled word by matching sorted characters
-function findUncrambledWord(scrambledWord, wordList) {
-    return wordList.find(word => word.split('').sort().join('') === scrambledWord.split('').sort().join(''));
-}
-
 // Main function to load words, scramble one, and try to validate it
 async function main() {
     const url = 'https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt';
@@ -49,7 +44,7 @@ async function main() {
 
 // Function to validate the word when the button is clicked
 function validateWord() {
-    const inputWord = prompt("Enter the uncrambled word:");
+    const inputWord = document.getElementById('unscrambledInput').value.trim();
 
     // Check if the input matches the original word
     if (inputWord === window.originalWord) {
@@ -57,6 +52,9 @@ function validateWord() {
     } else {
         document.getElementById('uncrambledWord').innerText = `Uncrambled Word: ${inputWord} (Incorrect)`;
     }
+
+    // Clear the input field after validation
+    document.getElementById('unscrambledInput').value = '';
 }
 
 // Load the game when the page loads
