@@ -1,62 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Word Scrambler</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f9;
-    }
-    h1 {
-      text-align: center;
-    }
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-    #meaning {
-      margin-top: 10px;
-      color: #555;
-    }
-    .input-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 30px;
-    }
-    input[type="text"] {
-      padding: 10px;
-      font-size: 16px;
-      width: 200px;
-      margin-right: 10px;
-    }
-    button {
-      padding: 10px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Scrambler</title>
+    <!-- Optional: Add a favicon -->
+    <!-- Remove this line if you don't need a favicon -->
+    <!-- <link rel="icon" href="path/to/favicon.ico" /> -->
 </head>
 <body>
 
-  <h1>Word Scrambler</h1>
+    <h1>Word Scrambler Game</h1>
+    
+    <!-- Button to trigger word validation -->
+    <button onclick="validateWord()">Validate Word</button>
 
-  <div class="input-container">
-    <input type="text" id="scrambled-word" placeholder="Enter scrambled word">
-    <button onclick="validateWord()">Check Word</button>
-  </div>
+    <p id="scrambledWord">Scrambled Word: </p>
+    <p id="uncrambledWord">Uncrambled Word: </p>
 
-  <div id="result"></div>
-  <div id="meaning"></div>
+    <!-- Link to the external script.js file -->
+    <script type="module" src="script.js"></script>
 
-  <script src="script.js"></script>
 </body>
 </html>
