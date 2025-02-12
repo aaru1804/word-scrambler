@@ -59,14 +59,9 @@
 
             // Helper function to check if a word can be formed from scrambled letters
             function canFormWord(word, scrambled) {
-                const wordChars = word.split('');
-                const scrambledChars = scrambled.split('');
-                return wordChars.every(char => {
-                    const index = scrambledChars.indexOf(char);
-                    if (index === -1) return false;
-                    scrambledChars.splice(index, 1); // Remove used character
-                    return true;
-                });
+                const wordChars = word.split('').sort().join('');
+                const scrambledChars = scrambled.split('').sort().join('');
+                return wordChars === scrambledChars;
             }
 
             // Loop through word list and suggest possible correct words
