@@ -1,4 +1,4 @@
-// Function to validate if a scrambled word exists
+// Function to validate if a scrambled word exists (using words.txt from GitHub)
 async function validateWord() {
   const scrambledWord = document.getElementById("scrambled-word").value.trim();
 
@@ -8,69 +8,46 @@ async function validateWord() {
     return;
   }
 
-  // Use a CORS proxy to avoid CORS issues
-  const corsProxy = "https://api.allorigins.win/get?url=";
-  const apiUrl = `https://api.datamuse.com/words?sp=${scrambledWord}`;
-  const proxiedUrl = `${corsProxy}${encodeURIComponent(apiUrl)}`;
-
-  console.log("API URL (Proxied):", proxiedUrl);  // Debugging log
+  // Fetch words.txt from GitHub
+  const wordsUrl = 'https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt';
 
   try {
-    // Make the fetch request
-    const response = await fetch(proxiedUrl);
-    
-    // Parse the JSON response
-    const data = await response.json();
-    console.log("API Response:", data);
+    // Fetch the word list from GitHub (text file)
+    const response = await fetch(wordsUrl);
+    const data = await response.text();
 
-    // Check if 'contents' exist and parse the response
-    const words = JSON.parse(data.contents);  // Parse the 'contents' field from the response
-    console.log("Valid words found:", words);
+    // Split the file content into an array of words
+    const wordList = data.split('\n').map(word => word.trim().toLowerCase());
 
-    if (words && words.length > 0) {
-      // If the word is valid, show a success message
+    // Check if the scrambled word is in the word list
+    if (wordList.includes(scrambledWord.toLowerCase())) {
       document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
       getMeaning(scrambledWord);  // Optionally, get and display meaning
     } else {
       // If the word is invalid, try permutations
-      await findCorrectWord(scrambledWord);
+      await findCorrectWord(scrambledWord, wordList);
     }
   } catch (error) {
-    console.error("Error with API request:", error);
+    console.error("Error with fetching words from GitHub:", error);
     document.getElementById("result").innerHTML = "There was an error checking the word.";
   }
 }
 
 // Function to find the correct word by generating permutations
-async function findCorrectWord(scrambledWord) {
+async function findCorrectWord(scrambledWord, wordList) {
   const permutations = getPermutations(scrambledWord);
   let foundWord = null;
 
   // Loop through all permutations to check if any is a valid word
   for (let i = 0; i < permutations.length; i++) {
-    const word = permutations[i];
-    const apiUrl = `https://api.datamuse.com/words?sp=${word}`;
-    const proxiedUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+    const word = permutations[i].toLowerCase();
 
-    console.log("Checking permutation:", word);  // Debugging log
-
-    try {
-      const response = await fetch(proxiedUrl);
-      const data = await response.json();
-
-      // Log API response for debugging
-      console.log("API Response for permutation:", data);
-
-      // Parse the contents and check if a valid word is found
-      const words = JSON.parse(data.contents);
-      if (words && words.length > 0) {
-        foundWord = word; // A valid word has been found
-        document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
-        getMeaning(foundWord);  // Optionally, get and display meaning
-        return;
-      }
-    } catch (error) {
-      console.error("Error with API request for permutation:", error);
+    // Check if the word is in the word list from GitHub
+    if (wordList.includes(word)) {
+      foundWord = word; // A valid word has been found
+      document.getElementById("result").innerHTML = `"${scrambledWord}" was unscrambled to "${foundWord}"!`;
+      getMeaning(foundWord);  // Optionally, get and display meaning
+      return;
     }
   }
 
