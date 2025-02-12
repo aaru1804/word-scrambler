@@ -41,11 +41,11 @@
     </div>
 
     <script>
-        // Fetch the words list from GitHub
+        // Fetch the words list from GitHub and convert all to lowercase
         async function fetchWordList() {
             const response = await fetch('https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt');
             const text = await response.text();
-            return text.split('\n').map(word => word.trim().toLowerCase());  // Return as an array of words
+            return text.split('\n').map(word => word.trim().toLowerCase());  // Convert each word to lowercase
         }
 
         // Function to find possible correct words based on scrambled input
@@ -59,14 +59,9 @@
 
             // Helper function to check if a word can be formed from scrambled letters
             function canFormWord(word, scrambled) {
-                const wordChars = word.split('');
-                const scrambledChars = scrambled.split('');
-                return wordChars.every(char => {
-                    const index = scrambledChars.indexOf(char);
-                    if (index === -1) return false;
-                    scrambledChars.splice(index, 1); // Remove used character
-                    return true;
-                });
+                const wordChars = word.split('').sort().join('');
+                const scrambledChars = scrambled.split('').sort().join('');
+                return wordChars === scrambledChars;
             }
 
             // Loop through word list and suggest possible correct words
