@@ -4,7 +4,7 @@ async function fetchWordsFromGithub(url) {
         const response = await fetch(url);
         if (response.ok) {
             const text = await response.text();
-            return text.splitlines(); // This splits the words by newlines
+            return text.split('\n'); // Corrected to split the text by newlines
         } else {
             console.error("Failed to fetch the file.");
             return [];
@@ -27,7 +27,6 @@ function scrambleWord(word) {
 
 // Function to compare the scrambled input with all words and find a match
 function unscramble(input, wordList) {
-    // Sort letters of the input and compare with sorted letters of each word in the word list
     const sortedInput = input.split('').sort().join('');
     return wordList.find(word => sortedInput === word.split('').sort().join(''));
 }
