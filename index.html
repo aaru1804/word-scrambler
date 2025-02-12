@@ -3,45 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Scrambler Game</title>
+    <title>Word Unscrambler</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f9;
+            margin: 20px;
         }
-        #scrambledWord {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        #uncrambledWord {
-            font-size: 24px;
+
+        .suggestions {
             margin-top: 20px;
         }
-        input {
-            padding: 10px;
-            font-size: 16px;
-            width: 250px;
-            margin-bottom: 10px;
+
+        .suggestions ul {
+            list-style-type: none;
+            padding: 0;
         }
-        button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
+
+        .suggestions li {
+            color: blue;
         }
     </style>
 </head>
 <body>
-    <h1>Word Scrambler Game</h1>
-    <div id="scrambledWord">Scrambled Word: Loading...</div>
-    <input type="text" id="unscrambledInput" placeholder="Enter your guess">
-    <button onclick="validateWord()">Unscramble</button>
-    <div id="uncrambledWord"></div>
 
-    <script src="script.js"></script>
+    <h1>Word Unscrambler</h1>
+
+    <!-- User Input Section -->
+    <label for="scrambledInput">Enter a scrambled word:</label>
+    <input type="text" id="scrambledInput" placeholder="Type a scrambled word here" />
+    <button id="submitBtn">Find Correct Word</button>
+
+    <!-- Suggested Correct Words -->
+    <div class="suggestions">
+        <h3>Possible Correct Words:</h3>
+        <ul id="suggestionsList"></ul>
+    </div>
+
+    <!-- Link to External JavaScript -->
+    <script src="script.js"></script>  <!-- Correct link to your external JS file -->
 </body>
 </html>
