@@ -1,56 +1,53 @@
-// Function to validate if a scrambled word exists
-async function validateWord() {
-  const scrambledWord = document.getElementById("scrambled-word").value.trim();
+import requests
+import random
 
-  // Validate input (ensure it's not empty)
-  if (!scrambledWord) {
-    document.getElementById("result").innerHTML = "Please enter a scrambled word!";
-    return;
-  }
+# Function to fetch words from GitHub
+def fetch_words_from_github(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        # Assuming the file contains one word per line
+        words = response.text.splitlines()
+        return words
+    else:
+        print("Failed to fetch the file.")
+        return []
 
-  // Get words from the GitHub repository's raw words.txt
-  const wordsUrl = "https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt";
-  
-  try {
-    // Fetch the word list from GitHub
-    const response = await fetch(wordsUrl);
-    const data = await response.text(); // Get text content of words.txt
+# Function to scramble a word
+def scramble_word(word):
+    word_list = list(word)
+    random.shuffle(word_list)
+    return ''.join(word_list)
+
+# Function to find the uncrambled word (e.g., by checking if it exists in the word list)
+def find_uncrambled_word(scrambled_word, word_list):
+    for word in word_list:
+        if sorted(scrambled_word) == sorted(word):
+            return word
+    return None
+
+# Main function to use the code
+def main():
+    # GitHub URL to the raw words.txt file
+    url = 'https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt'
+
+    # Fetch words from GitHub
+    words = fetch_words_from_github(url)
+    if not words:
+        return
+
+    # Select a random word and scramble it
+    original_word = random.choice(words)
+    scrambled = scramble_word(original_word)
     
-    // Split the file content into an array of words
-    const wordList = data.split('\n').map(word => word.trim().toLowerCase());
+    print(f"Scrambled Word: {scrambled}")
+
+    # Try to find the uncrambled word
+    uncrambled_word = find_uncrambled_word(scrambled, words)
     
-    console.log("Word List Loaded:", wordList);
+    if uncrambled_word:
+        print(f"Uncrambled Word: {uncrambled_word}")
+    else:
+        print("No matching uncrambled word found.")
 
-    // Check if the scrambled word exists in the word list
-    if (wordList.includes(scrambledWord.toLowerCase())) {
-      document.getElementById("result").innerHTML = `"${scrambledWord}" is a valid word!`;
-    } else {
-      // If not found in the word list, show an error
-      document.getElementById("result").innerHTML = `"${scrambledWord}" is not a valid word.`;
-    }
-
-  } catch (error) {
-    console.error("Error fetching word list:", error);
-    document.getElementById("result").innerHTML = "There was an error checking the word.";
-  }
-}
-
-// Function to generate all permutations of a string (optimized version)
-function getPermutations(str) {
-  let results = [];
-  if (str.length === 1) {
-    results.push(str);
-  } else {
-    for (let i = 0; i < str.length; i++) {
-      const char = str[i];
-      const remainingChars = str.slice(0, i) + str.slice(i + 1);
-      const subPermutations = getPermutations(remainingChars);
-      for (let j = 0; j < subPermutations.length; j++) {
-        results.push(char + subPermutations[j]);
-      }
-    }
-  }
-
-  // Limit the number of permutations if necessary (optional)
-  return results.slice(0, 100); // Limit to first 100 permutations for efficiency
-}
+if __name__ == '__main__':
+    main()
