@@ -23,12 +23,6 @@
         .suggestions li {
             color: blue;
         }
-
-        /* Loading state styles */
-        .loading {
-            font-style: italic;
-            color: gray;
-        }
     </style>
 </head>
 <body>
@@ -40,9 +34,6 @@
     <input type="text" id="scrambledInput" placeholder="Type a scrambled word here" />
     <button id="submitBtn">Find Correct Word</button>
 
-    <!-- Loading message -->
-    <div id="loadingMessage" class="loading">Loading word list...</div>
-
     <!-- Suggested Correct Words -->
     <div class="suggestions">
         <h3>Possible Correct Words:</h3>
@@ -50,19 +41,11 @@
     </div>
 
     <script>
-        let wordList = []; // To store the fetched word list
-
         // Fetch the words list from GitHub
         async function fetchWordList() {
-            try {
-                const response = await fetch('https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt');
-                const text = await response.text();
-                wordList = text.split('\n').map(word => word.trim().toLowerCase());  // Return as an array of words
-                document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message once data is loaded
-            } catch (error) {
-                console.error("Error fetching word list:", error);
-                document.getElementById('loadingMessage').textContent = "Failed to load word list.";
-            }
+            const response = await fetch('https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt');
+            const text = await response.text();
+            return text.split('\n').map(word => word.trim().toLowerCase());  // Return as an array of words
         }
 
         // Function to find possible correct words based on scrambled input
@@ -70,19 +53,20 @@
             const scrambledWord = document.getElementById('scrambledInput').value.trim().toLowerCase();
             if (scrambledWord === "") return;  // Avoid processing empty input
 
-            // Check if the word list is available, if not, fetch it
-            if (wordList.length === 0) {
-                await fetchWordList();
-            }
-
+            const wordList = await fetchWordList();
             const suggestionsList = document.getElementById('suggestionsList');
             suggestionsList.innerHTML = ''; // Clear previous suggestions
 
             // Helper function to check if a word can be formed from scrambled letters
             function canFormWord(word, scrambled) {
-                const wordChars = word.split('').sort().join('');
-                const scrambledChars = scrambled.split('').sort().join('');
-                return wordChars === scrambledChars;
+                const wordChars = word.split('');
+                const scrambledChars = scrambled.split('');
+                return wordChars.every(char => {
+                    const index = scrambledChars.indexOf(char);
+                    if (index === -1) return false;
+                    scrambledChars.splice(index, 1); // Remove used character
+                    return true;
+                });
             }
 
             // Loop through word list and suggest possible correct words
@@ -107,9 +91,6 @@
 
         // Submit button listener
         document.getElementById('submitBtn').addEventListener('click', findCorrectWords);
-
-        // Initial fetch call to load the word list when the page loads
-        fetchWordList();
     </script>
 
 </body>
