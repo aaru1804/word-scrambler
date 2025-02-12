@@ -25,18 +25,16 @@ function scrambleWord(word) {
     return wordList.join('');
 }
 
-// Function to compare the scrambled input with all words and find a match
+// Function to compare the scrambled input with all words and find matching words
 function unscramble(input, wordList) {
-    // Sort the letters of the input
-    const sortedInput = input.split('').sort().join('');
+    const sortedInput = input.split('').sort().join('');  // Sort the input word's letters
 
-    // Loop through the words and compare sorted letters
-    for (let word of wordList) {
-        if (sortedInput === word.split('').sort().join('')) {
-            return word;  // Return the word if it matches
-        }
-    }
-    return null;  // Return null if no match is found
+    // Find all matching words
+    const matchingWords = wordList.filter(word => {
+        return sortedInput === word.split('').sort().join('');  // Compare sorted letters
+    });
+
+    return matchingWords;  // Return all matching words (can be an array)
 }
 
 // Main function to load words, scramble one, and try to validate it
@@ -61,11 +59,11 @@ async function main() {
 function validateWord() {
     const inputWord = document.getElementById('unscrambledInput').value.trim();
 
-    // Check if the input matches the original word by unscrambling
-    const correctWord = unscramble(inputWord, window.wordList);
+    // Check if the input matches any words by unscrambling
+    const matchingWords = unscramble(inputWord, window.wordList);
 
-    if (correctWord) {
-        document.getElementById('uncrambledWord').innerText = `Uncrambled Word: ${correctWord} (Correct!)`;
+    if (matchingWords.length > 0) {
+        document.getElementById('uncrambledWord').innerText = `Uncrambled Words: ${matchingWords.join(', ')} (Correct!)`;
     } else {
         document.getElementById('uncrambledWord').innerText = `Uncrambled Word: ${inputWord} (Incorrect)`;
     }
