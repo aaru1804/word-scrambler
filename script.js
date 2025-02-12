@@ -1,76 +1,97 @@
-// Function to fetch words from GitHub
-async function fetchWordsFromGithub(url) {
-    try {
-        const response = await fetch(url);
-        if (response.ok) {
-            const text = await response.text();
-            return text.split('\n'); // Split the text by newlines
-        } else {
-            console.error("Failed to fetch the file.");
-            return [];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Unscrambler</title>
+    <style>
+        /* Add your styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
-    } catch (error) {
-        console.error("Error fetching the file: ", error);
-        return [];
-    }
-}
 
-// Function to scramble a word
-function scrambleWord(word) {
-    const wordList = word.split('');
-    for (let i = wordList.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [wordList[i], wordList[j]] = [wordList[j], wordList[i]];  // Swap letters
-    }
-    return wordList.join('');
-}
+        .suggestions {
+            margin-top: 20px;
+        }
 
-// Function to compare the scrambled input with all words and find matching words
-function unscramble(input, wordList) {
-    const sortedInput = input.split('').sort().join('');  // Sort the input word's letters
+        .suggestions ul {
+            list-style-type: none;
+            padding: 0;
+        }
 
-    // Find all matching words
-    const matchingWords = wordList.filter(word => {
-        return sortedInput === word.split('').sort().join('');  // Compare sorted letters
-    });
+        .suggestions li {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
 
-    return matchingWords;  // Return all matching words (can be an array)
-}
+    <h1>Word Unscrambler</h1>
 
-// Main function to load words, scramble one, and try to validate it
-async function main() {
-    const url = 'https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt';
-    const words = await fetchWordsFromGithub(url);
-    if (words.length === 0) return;
+    <!-- User Input Section -->
+    <label for="scrambledInput">Enter a scrambled word:</label>
+    <input type="text" id="scrambledInput" placeholder="Type a scrambled word here" />
+    <button id="submitBtn">Find Correct Word</button>
 
-    // Select a random word from the list and scramble it
-    const originalWord = words[Math.floor(Math.random() * words.length)];
-    const scrambled = scrambleWord(originalWord);
+    <!-- Suggested Correct Words -->
+    <div class="suggestions">
+        <h3>Possible Correct Words:</h3>
+        <ul id="suggestionsList"></ul>
+    </div>
 
-    // Display the scrambled word
-    document.getElementById('scrambledWord').innerText = `Scrambled Word: ${scrambled}`;
+    <script>
+        // Fetch the words list from GitHub
+        async function fetchWordList() {
+            const response = await fetch('https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words.txt');
+            const text = await response.text();
+            return text.split('\n').map(word => word.trim().toLowerCase());  // Return as an array of words
+        }
 
-    // Store the original word for later validation
-    window.wordList = words; // Store the word list globally
-    window.originalWord = originalWord;
-}
+        // Function to find possible correct words based on scrambled input
+        async function findCorrectWords() {
+            const scrambledWord = document.getElementById('scrambledInput').value.trim().toLowerCase();
+            if (scrambledWord === "") return;  // Avoid processing empty input
 
-// Function to validate the word when the button is clicked
-function validateWord() {
-    const inputWord = document.getElementById('unscrambledInput').value.trim();
+            const wordList = await fetchWordList();
+            const suggestionsList = document.getElementById('suggestionsList');
+            suggestionsList.innerHTML = ''; // Clear previous suggestions
 
-    // Check if the input matches any words by unscrambling
-    const matchingWords = unscramble(inputWord, window.wordList);
+            // Helper function to check if a word can be formed from scrambled letters
+            function canFormWord(word, scrambled) {
+                const wordChars = word.split('');
+                const scrambledChars = scrambled.split('');
+                return wordChars.every(char => {
+                    const index = scrambledChars.indexOf(char);
+                    if (index === -1) return false;
+                    scrambledChars.splice(index, 1); // Remove used character
+                    return true;
+                });
+            }
 
-    if (matchingWords.length > 0) {
-        document.getElementById('uncrambledWord').innerText = `Uncrambled Words: ${matchingWords.join(', ')} (Correct!)`;
-    } else {
-        document.getElementById('uncrambledWord').innerText = `Uncrambled Word: ${inputWord} (Incorrect)`;
-    }
+            // Loop through word list and suggest possible correct words
+            const possibleWords = wordList.filter(word => canFormWord(word, scrambledWord));
 
-    // Clear the input field after validation
-    document.getElementById('unscrambledInput').value = '';
-}
+            // Display suggestions
+            if (possibleWords.length > 0) {
+                possibleWords.forEach(word => {
+                    const li = document.createElement('li');
+                    li.textContent = word;
+                    suggestionsList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = "No valid words found.";
+                suggestionsList.appendChild(li);
+            }
 
-// Load the game when the page loads
-window.onload = main;
+            // Clear the input field for new entries
+            document.getElementById('scrambledInput').value = '';
+        }
+
+        // Submit button listener
+        document.getElementById('submitBtn').addEventListener('click', findCorrectWords);
+    </script>
+
+</body>
+</html>
