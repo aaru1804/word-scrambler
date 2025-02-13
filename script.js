@@ -1,6 +1,6 @@
 // Fetch the words list from GitHub (Updated to use words_lowercase.txt)
 async function fetchWordList() {
-    const response = await fetch('https://raw.githubusercontent.com/aaru1804/word-scrambler/main/words_lowercase.txt');
+    const response = await fetch('https://aaru1804.github.io/word-scrambler/words_lowercase.txt');
     const text = await response.text();
     return text.split('\n').map(word => word.trim().toLowerCase());  // Return as an array of words
 }
